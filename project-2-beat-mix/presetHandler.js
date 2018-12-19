@@ -28,24 +28,7 @@ const presetHandler = (method, index, newPresetArray) => {
 }
 
 
-const getNeighborPads = (x,y,size) => {
-  // Test for valid input x and y
-  if(x>size-1 || y>size-1) return [];
-  let result = [];
-  // Left Corner
-  var top = [x,y-1];
-  var right = [x+1,y];
-  var bottom = [x,y+1];
-  var left = [x-1,y];
 
-  if(top[1]>-1) result.push(top);
-  if(right[0]<size) result.push(right);
-  if(bottom[1]<size) result.push(bottom);
-  if(left[0]>-1) result.push(left);
-  return result;
-}
-
-if(debug)console.log(getNeighborPads(2,2,10));
 
 // Leave this line so that your presetHandler function can be used elsewhere:
 module.exports = presetHandler;

@@ -315,9 +315,6 @@ describe('Preset function - presetHandler.js file', () => {
 
   let presets = require('../presets');
   const presetHandler = require('../presetHandler');
-  console.log("test:"+ presetHandler instanceof Function);
-
-console.log(presetHandler);
   describe('presetHandler() function', () => {
 
     it('should exist and be a function', () => {

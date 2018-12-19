@@ -1,20 +1,21 @@
 const debug = false;
+
+const initEmptyArray = (size) => {
+  return new Array(size).fill(false);
+}
+
 // Drum Arrays
-let kicks = new Array(16);
-let snares = new Array(16);
-let hiHats = new Array(16);
-let rideCymbals = new Array(16);
+let kicks = initEmptyArray(16);
+let snares = initEmptyArray(16);
+let hiHats = initEmptyArray(16);
+let rideCymbals = initEmptyArray(16);
 
 let drumset = []
 drumset['kicks'] = kicks;
 drumset['snares']= snares;
 drumset['hiHats']=hiHats;
 drumset['rideCymbals']=rideCymbals;
-// Initialise with false
-kicks.fill(false);
-snares.fill(false);
-hiHats.fill(false);
-rideCymbals.fill(false);
+
 
 // Flip the state of Array at index
 const toggleDrum = (arrayName, index) => {
@@ -55,6 +56,24 @@ const invert = (arrayName) => {
 
 }
 
+
+const getNeighborPads = (x,y,size) => {
+  // Test for valid input x and y
+  //console.log(x+","+y+","+size);
+  if(x<0 || y<0 || x>size-1 || y>size-1) return [];
+  let result = [];
+  // Left Corner
+  var top = [x,y-1];
+  var right = [x+1,y];
+  var bottom = [x,y+1];
+  var left = [x-1,y];
+
+  if(top[1]>-1) result.push(top);
+  if(right[0]<size) result.push(right);
+  if(bottom[1]<size) result.push(bottom);
+  if(left[0]>-1) result.push(left);
+  return result;
+}
 
 if(debug) console.log(validCall('kicks'));
 if(debug) console.log(validCall('scheiß'));
