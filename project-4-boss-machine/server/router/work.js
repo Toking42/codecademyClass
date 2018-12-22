@@ -27,8 +27,9 @@ workRouter.param('workId', (req, res, next, id) => {
 
 workRouter.get('/', (req, res, next) => {
   if(DEBUG) console.log('-->get Work');
-
-  res.send(db.getAllFromDatabase('work'));
+  let allWork = db.getAllFromDatabase('work');
+  let filteredWork =  allWork.filter(item => {return Number(req.minion.id) == Number(item.id)});
+  res.send(filteredWork);
 })
 
 workRouter.post('/', (req, res, next) => {
@@ -42,15 +43,20 @@ workRouter.post('/', (req, res, next) => {
 workRouter.put('/:workId', (req, res, next) => {
   if(DEBUG) console.log('-->Update Work');
   if(DEBUG) console.log(req.body);
+  if(req.work.minionId != req.minion.id) return res.status(400).send('Work ID not a match for MinionID');
+
   let updatedWork = {}
   if(req.work != undefined){
     updatedWork= db.updateInstanceInDatabase('work', req.body);
    }
+   if(DEBUG) console.log(updatedWork);
+
   if(DEBUG) console.log('<--Update Work');
   res.send(updatedWork);
 })
 
 workRouter.get('/:workId', (req, res, next) => {
+  if(req.work.minionID != req.minion.id) return res.status(400).send('Work ID not a match for MinionID');
   res.send(req.work);
 })
 

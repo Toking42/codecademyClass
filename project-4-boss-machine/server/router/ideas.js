@@ -1,6 +1,7 @@
 // Idea ideasRouter
 const express = require('express');
 const ideasRouter = express.Router();
+const checkMillionDollarIdea = require('../checkMillionDollarIdea');
 const db = require('../db.js');
 
 const DEBUG  =false;
@@ -29,7 +30,7 @@ ideasRouter.get('/', (req, res, next) => {
   res.send(db.getAllFromDatabase('ideas'));
 })
 
-ideasRouter.post('/', (req, res, next) => {
+ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
   if(DEBUG) console.log('-->Insert Idea');
   if(DEBUG) console.log(req.body);
   let idea = db.addToDatabase('ideas', req.body);
@@ -37,7 +38,7 @@ ideasRouter.post('/', (req, res, next) => {
   res.send(idea);
 })
 
-ideasRouter.put('/:ideaId', (req, res, next) => {
+ideasRouter.put('/:ideaId', checkMillionDollarIdea, (req, res, next) => {
   if(DEBUG) console.log('-->Update Idea');
   if(DEBUG) console.log(req.body);
   let updatedIdea = {};

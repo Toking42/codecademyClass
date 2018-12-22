@@ -39,9 +39,9 @@ minionRouter.post('/', (req, res, next) => {
   if(DEBUG) console.log('-->Insert Minion');
   if(DEBUG) console.log(req.body);
 
-  let minion = db.addToDatabase('minions', req.body);
-
-  res.send(minion);
+    let minion = db.addToDatabase('minions', req.body);
+    minion.salary = Number(minion.salary);
+    res.send(minion);
 })
 
 minionRouter.put('/:minionId', (req, res, next) => {
