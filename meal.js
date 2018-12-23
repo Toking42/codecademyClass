@@ -39,7 +39,7 @@ const meal = {
   }
 }
 
-console.log(meal.courses);
+//console.log(meal.courses);
 meal.addDishToCourse('mains','Schnitzel',9.8);
 meal.addDishToCourse('mains','Cordon Bleu',9.8);
 meal.addDishToCourse('mains','Spätzle',9.8);
@@ -51,5 +51,5 @@ meal.addDishToCourse('desserts','Mousse',9.8);
 meal.addDishToCourse('desserts','Creme',9.8);
 meal.addDishToCourse('desserts','Eis',9.8);
 
-console.log(meal.courses);
+//console.log(meal.courses);
 console.log(meal.generateRandomMeal());
