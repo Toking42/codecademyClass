@@ -1,0 +1,36 @@
+users:
+  Toking:
+    username: Toking
+    articleIds:
+      - 3
+      - 4
+    commentIds: []
+  Karin:
+    username: Karin
+    articleIds: []
+    commentIds: []
+articles:
+  '1': null
+  '2': null
+  '3':
+    id: 3
+    title: My first Post
+    url: 'http://test.com/v1'
+    username: Toking
+    commentIds: []
+    upvotedBy:
+      - Karin
+    downvotedBy: []
+  '4':
+    id: 4
+    title: My second Post
+    url: 'http://test.com/v2'
+    username: Toking
+    commentIds: []
+    upvotedBy:
+      - Karin
+    downvotedBy: []
+comments:
+  '1': null
+nextArticleId: 5
+nextCommentId: 2
