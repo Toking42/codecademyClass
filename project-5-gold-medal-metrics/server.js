@@ -34,14 +34,14 @@ app.get('/country/:countryName', (req, res, next) => {
   const goldMedalQuery = goldMedalNumber(countryName);
   const summerWinsQuery = mostSummerWins(countryName);
   const winterWinsQuery = mostWinterWins(countryName);
-  const disciplineQuery = bestDiscipline(countryName); 
+  const disciplineQuery = bestDiscipline(countryName);
   const sportQuery = bestSport(countryName);
   const eventQuery = bestEvent(countryName);
   const menMedalistsQuery = numberMenMedalists(countryName);
   const womenMedalistsQuery = numberWomenMedalists(countryName);
   const yearQuery = bestYear(countryName);
   const mostMedalsQuery = mostMedaledAthlete(countryName);
-  
+
   let country = {'name': countryName};
   db.serialize(() => {
     db.parallelize(() => {
