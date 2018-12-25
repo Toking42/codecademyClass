@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(cors());
 
-app.use('/api', function (req, res, next) {console.log("API-Call");next()}, apiRouter);
+app.use('/api', apiRouter);
 
 app.use(errorhandler());
 

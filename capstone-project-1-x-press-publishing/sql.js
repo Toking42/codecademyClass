@@ -49,6 +49,9 @@ const getQueryItemFromTable = function (table, id) {
     return "SELECT * FROM "+table+" WHERE id = "+id+";";
 
 }
+const getQueryIusse4Serie = function (id) {
+    return "SELECT * FROM Issue WHERE series_id = "+id+";";
+}
 
 module.exports = {
   createTableArtist,
@@ -56,5 +59,6 @@ module.exports = {
   createTableIssues,
   getQueryAllFromTable,
   getQueryItemFromTable,
-  getQueryAllEmployedArtists
+  getQueryAllEmployedArtists,
+  getQueryIusse4Serie
 };

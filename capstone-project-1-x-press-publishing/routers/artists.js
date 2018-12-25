@@ -82,7 +82,7 @@ artistRouter.put('/:artistId', (req, res, next) => {
     let newArtist = req.body.artist;
     db.run("UPDATE Artist set name = $name , date_of_birth = $dateOfBirth, biography =$biography, is_currently_employed = $isCurrentlyEmployed WHERE id = $id;",
     {
-      $id:newArtist.id,
+      $id:req.artistId,
       $name : newArtist.name,
       $dateOfBirth: newArtist.dateOfBirth,
       $biography: newArtist.biography,
@@ -91,10 +91,11 @@ artistRouter.put('/:artistId', (req, res, next) => {
     }, function (err) {
         if(err) console.log(err);
         else {
-          db.get("SELECT * FROM Artist where id = $id",{$id:req.body.artist.id}, (err, row) => {
+          db.get("SELECT * FROM Artist where id = $id",{$id:req.artistId}, (err, row) => {
             if(err) next(err);
-            else if(row) res.status(201).send({artist:row});
-            else return res.status(404).send('Artist not found');
+            else if(row) {
+              res.status(200).json({artist:row});
+            } else return res.status(404).send('Artist not found');
           })
         }
       }
@@ -102,10 +103,23 @@ artistRouter.put('/:artistId', (req, res, next) => {
 
 });
 
+artistRouter.delete('/:artistId', (req, res, next) => {
+    db.run("UPDATE Artist set is_currently_employed = 0 WHERE id = $id;",
+    {$id:req.artistId}, function (err) {
+        if(err) console.log(err);
+        else {
+          db.get("SELECT * FROM Artist where id = $id",{$id:req.artistId}, (err, row) => {
+            if(err) next(err);
+            else if(row) {
+              res.status(200).json({artist:row});
+            } else return res.status(404).send('Artist not found');
+          })
+        }
+      });
+  });
+
 
 const isValidArtist = (newArtist, req) => {
-  if(DEBUG) console.log("--> validate Artist");
-  console.log(newArtist.name);
   if(newArtist.name === undefined) return false;
   if(newArtist.dateOfBirth === undefined) return false;
   if(newArtist.biography === undefined) return false;
