@@ -1,8 +1,5 @@
 // Todo Implement Database Connection
 
-
-
-
 db.serialize(function() {
 db.run("CREATE TABLE" +"    IF NOT EXISTS zutat" +
 "    (" +
@@ -87,7 +84,8 @@ db.run("CREATE TABLE" +"    IF NOT EXISTS rezept_zutat" +
 "        rezept bigint NOT NULL REFERENCES rezept(id)," +
 "        einheit bigint NOT NULL REFERENCES einheit(id)," +
 "        zutat bigint NOT NULL REFERENCES zutat(id)," +
-"        menge NUMERIC" +
+"        menge NUMERIC," +
+"        beschreibung text" +
 "    );" +
 
 );
@@ -97,7 +95,8 @@ db.run("CREATE TABLE" +"    IF NOT EXISTS rezept_geraet" +
 "        rezept bigint NOT NULL REFERENCES rezept(id)," +
 "        einheit bigint NOT NULL REFERENCES einheit(id)," +
 "        geraet bigint NOT NULL REFERENCES geraet(id)," +
-"        menge NUMERIC" +
+"        menge NUMERIC," +
+"        beschreibung text" +
 "    );" +
 
 );
@@ -185,6 +184,7 @@ db.run("CREATE UNIQUE INDEX idx_schwierigket_schluessel ON schwierigkeit (schlue
 db.run("CREATE UNIQUE INDEX idx_zutat_schluessel ON zutat (schluessel);");
 db.run("CREATE UNIQUE INDEX idx_rezept_schluessel ON rezept (schluessel);");
 db.run("CREATE UNIQUE INDEX idx_nutzer_email ON nutzer (email);");
+db.run("CREATE UNIQUE INDEX idx_wertungkategorie_email ON wertungkategorie (schluessel);")"
 
 
     );

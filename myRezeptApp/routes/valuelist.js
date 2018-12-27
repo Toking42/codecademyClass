@@ -9,7 +9,7 @@ updateNameKeyObject,
 insertNameKeyObject,
 deleteNameKeyObject,
 getAllFromTable,
-getStructure} = require('./../sql');
+getStructure} = require('./../db/');
 
 
 

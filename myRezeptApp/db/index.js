@@ -3,7 +3,30 @@
 
 const DEBUG = true;
 
+const { Pool } = require('pg');
+const pool = new Pool({
+  		user: 'postgres',
+  		host: 'localhost',
+  		database: 'bidat_cookbook',
+  		password: 'postgres',
+  		port: 5432
+});
 
+
+const  query = function (text, params, callback) {
+    const start = Date.now()
+    return pool.query(text, params, (err, res) => {
+      const duration = Date.now() - start;
+      //if(res)
+      console.log('executed query', { text, duration})
+      callback(err, res)
+    })
+}
+const getClient = function (callback) {
+    pool.connect((err, client, done) => {
+      callback(err, client, done)
+    })
+}
 
 const dataStructure = {
 
@@ -61,20 +84,14 @@ const deleteNameKeyObject = function(req, res, next) {
   let obj = req.body[structure.jsonName][0];
   let query = "DELETE FROM "+structure.tableName+
               " WHERE id = "+req.itemId;
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(query, (err, rs) => {
+  query(query, (err, rs) => {
       if(err) {
         console.log(query);
         next(err)
       } else {
         res.status(204).send();
       }
-      });
-      done();
-    }
-  })
+  });
 
 }
 
@@ -88,23 +105,16 @@ const updateNameKeyObject = function(req, res, next) {
               "', name = '"+obj.name+
               "', beschreibung =  '"+obj.beschreibung+
               "' WHERE id = "+req.itemId+" returning *";
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(query, (err, rs) => {
-      if(err) {
-        console.log(query);
-        next(err)
-      } else {
-        let result  = {};
-        result[structure['jsonName']] = rs.rows;
-        res.status(200).json(result);
-      }
-      });
-      done();
+  query(query, (err, rs) => {
+    if(err) {
+      console.log(query);
+      next(err)
+    } else {
+      let result  = {};
+      result[structure['jsonName']] = rs.rows;
+      res.status(200).json(result);
     }
-  })
-
+    });
 }
 
 const insertNameKeyObject = function(req, res, next) {
@@ -117,25 +127,17 @@ const insertNameKeyObject = function(req, res, next) {
           " VALUES ('"+obj.schluessel+"','"+obj.name+"','"+obj.beschreibung+"')" +
           " returning *";
           if(DEBUG) console.log(query);
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(query, (err, rs) => {
-      if(err) {
-        console.log(query);
-        next(err)
-      } else {
-        let result  = {};
-        result[structure['jsonName']] = rs.rows;
-        console.log(result);
-        res.status(200).json(result);
+  query(query, (err, rs) => {
+    if(err) {
+      console.log(query);
+      next(err)
+    } else {
+      let result  = {};
+      result[structure['jsonName']] = rs.rows;
+      console.log(result);
+      res.status(200).json(result);
       }
       });
-      done();
-    }
-  })
-
-
 }
 
 
@@ -154,10 +156,7 @@ const getAllFromTable = function(req, res, next) {
     console.log(structure);
   }
   if(structure === undefined) return res.status(404).send();
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(selectAllFromTable(structure.tableName), (err, rs) => {
+    query(selectAllFromTable(structure.tableName), (err, rs) => {
       if(err) next(err)
       else {
         if(DEBUG) console.log(res);
@@ -166,14 +165,12 @@ const getAllFromTable = function(req, res, next) {
         console.log(result);
         res.status(200).json(result);
       }
-      });
-      done();
-    }
   })
 }
 
 
 module.exports = {
+  query,
   selectAllFromTable,
   selectAllFromTableByFieldValue,
   deleteItemFromTable,

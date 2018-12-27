@@ -12,58 +12,40 @@ router.param('userId', function(req, res, next, id) {
   let query =  "Select id, name, email, kennwort, beschreibung FROM nutzer WHERE id ="+req.userId;
   if(isNaN(req.userId)) query = "Select id, name, email, kennwort, beschreibung FROM nutzer WHERE email ilike '"+req.userId+"'";
   if(DEBUG) console.log(query);
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(query, (err, rs) => {
-      if (err){
-        next(err);
-      } else {
-        let result  = {};
-        req.user =  rs.rows[0];
-        next();
-      }
-      });
-      done();
+  req.db.query(query, (err, rs) => {
+    if (err) {
+      return next(err)
     }
-  });
+    req.user = rs.rows[0];
+    next();
+  })
 });
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   let query =  "Select id, name, email, beschreibung FROM nutzer ";
   if(DEBUG) console.log(query);
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-    client.query(query, (err, rs) => {
-      if (err){
-        next(err);
-      } else {
-        let result  = {};
-        result['users'] = rs.rows;
-        console.log(result);
-        res.status(200).json(result);
-      }
-      });
-      done();
+  req.db.query(query, (err, rs) => {
+    if (err){
+      next(err);
+    } else {
+      let result  = {};
+      result['users'] = rs.rows;
+      console.log(result);
+      res.status(200).json(result);
     }
-  })
+  });
 });
 
 router.post('/', function(req, res, next) {
   let user = req.body.users[0];
-  console.log('--> Add User');
-  console.log(user);
   bcrypt.hash(user.kennwort, 10, function(err, hash) {
     let query =  "INSERT INTO nutzer ( name, email, kennwort, beschreibung) "+
-            " VALUES ('"+user.name+"','"+user.email+"','"+hash+"','"+user.beschreibung+"')" +
-            " returning *";
-            if(DEBUG) console.log(query);
-    req.db.connect((err, client, done) => {
-      if (err) next(err);
-      else {
-      client.query(query, (err, rs) => {
+              " VALUES ('"+user.name+"','"+user.email+"','"+hash+"','"+user.beschreibung+"')" +
+              " returning *";
+    if(DEBUG) console.log(query);
+
+    req.db.query(query, (err, rs) => {
         if(err && err.constraint && err.constraint ==='idx_nutzer_email') {
           return res.status(409).send("Email-adress already in use");
         } else if (err){
@@ -76,14 +58,9 @@ router.post('/', function(req, res, next) {
           user['id'] = rs.rows[0].id;
           user['beschreibung'] = rs.rows[0].beschreibung;
           result['users'] = user;
-          console.log(result);
           res.status(200).json(result);
-        }
-        });
-        done();
       }
-    })
-
+    });
   });
 });
 
@@ -101,35 +78,26 @@ router.get('/:userId', function(req, res, next) {
 
 router.put('/:userId', function(req, res, next) {
   let user = req.body.users[0];
-  console.log('--> Update User');
-  console.log(user);
   let query =  "UPDATE nutzer set name = '"+user.name+"', email='"+user.email+"', beschreibung = '"+user.beschreibung+"' "+
             " WHERE id = "+req.userId +
             " returning *";
-            if(DEBUG) console.log(query);
-    req.db.connect((err, client, done) => {
-      if (err) next(err);
-      else {
-      client.query(query, (err, rs) => {
-        if(err && err.constraint && err.constraint ==='idx_nutzer_email') {
-          return res.status(409).send("Email-adress already in use");
-        } else if (err){
-          next(err);
-        } else {
-          let result  = {};
-          let user = {};
-          user['name'] = rs.rows[0].name;
-          user['email'] = rs.rows[0].email;
-          user['id'] = rs.rows[0].id;
-          user['beschreibung'] = rs.rows[0].beschreibung;
-          result['users'] = user;
-          console.log(result);
-          res.status(200).json(result);
-        }
-        });
-        done();
+  if(DEBUG) console.log(query);
+  req.db.query(query, (err, rs) => {
+      if(err && err.constraint && err.constraint ==='idx_nutzer_email') {
+        return res.status(409).send("Email-adress already in use");
+      } else if (err){
+        next(err);
+      } else {
+        let result  = {};
+        let user = {};
+        user['name'] = rs.rows[0].name;
+        user['email'] = rs.rows[0].email;
+        user['id'] = rs.rows[0].id;
+        user['beschreibung'] = rs.rows[0].beschreibung;
+        result['users'] = user;
+        res.status(200).json(result);
       }
-    });
+  });
 });
 
 router.put('/:userId/changepasswd', function(req, res, next) {
@@ -150,27 +118,21 @@ router.put('/:userId/changepasswd', function(req, res, next) {
         let query =  "UPDATE nutzer set kennwort = '"+hash+"'"+
                   " WHERE id = "+req.userId +
                   " returning *";
-                  req.db.connect((err, client, done) => {
-                    if (err) next(err);
-                    else {
-                    client.query(query, (err, rs) => {
-                      if (err){
-                        next(err);
-                      } else {
-                        let result  = {};
-                        let user = {};
-                        user['name'] = rs.rows[0].name;
-                        user['email'] = rs.rows[0].email;
-                        user['id'] = rs.rows[0].id;
-                        user['beschreibung'] = rs.rows[0].beschreibung;
-                        result['users'] = user;
-                        console.log(result);
-                        res.status(200).json(result);
-                      }
-                      });
-                      done();
-                    }
-                  });
+        req.db.query(query, (err, rs) => {
+          if (err){
+            next(err);
+          } else {
+            let result  = {};
+            let user = {};
+            user['name'] = rs.rows[0].name;
+            user['email'] = rs.rows[0].email;
+            user['id'] = rs.rows[0].id;
+            user['beschreibung'] = rs.rows[0].beschreibung;
+            result['users'] = user;
+            console.log(result);
+            res.status(200).json(result);
+          }
+        });
       });
     } else {
       console.log(err);
@@ -182,21 +144,19 @@ router.put('/:userId/changepasswd', function(req, res, next) {
 
 
 router.delete('/:userId', function(req, res, next) {
-  let query = "DELETE FROM nutzer where id = $1;";
+  let query = [
+    "DELETE FROM nutzer_favorit where nutzer = $1;",
+    "DELETE FROM nutzer_kommentar where nutzer = $1;",
+    "DELETE FROM nutzer_rolle where nutzer = $1;",
+    "DELETE FROM nutzer where id = $1;"
+  ];
+  for(let i = 0; i< query.length; i++) {
+    req.db.query(query[i], [req.userId], (err, rs) => {
+      if (err) next(err)
 
-  req.db.connect((err, client, done) => {
-    if (err) next(err);
-    else {
-      client.query(query, [req.userId], (err, rs) => {
-        console.log("after query");
-        console.log(err);
-        console.log(rs);
-        if (err) next(err)
-        else res.status(204).send();
-      });
-      done();
-    }
-  });
+    });
+  }
+  res.status(204).send();
 });
 
 module.exports = router;

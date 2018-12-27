@@ -5,19 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 
-const { Pool } = require('pg');
-	const pool = new Pool({
-  		user: 'postgres',
-  		host: 'localhost',
-  		database: 'bidat_cookbook',
-  		password: 'postgres',
-  		port: 5432
-	});
 
-pool.on('error', (err, client) => {
-  	console.error('Unexpected error on idle client', err)
-  	process.exit(-1)
-});
+const db = require('./db')
+
 
 const PORT = process.env.PORT || 4000;
 
@@ -25,6 +15,7 @@ const PORT = process.env.PORT || 4000;
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var valuelistRouter = require('./routes/valuelist');
+var recepieRouter = require('./routes/recepie');
 
 
 var app = express();
@@ -46,13 +37,15 @@ app.use(sassMiddleware({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', (req, res, next ) => {
-  req.db = pool;
+  req.db = db;
   next();
 })
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/wl', valuelistRouter);
+app.use('/recepies', recepieRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
