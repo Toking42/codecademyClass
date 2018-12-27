@@ -1,20 +1,42 @@
 /* Codecademy Project Minesweeper
 * author: Thomas Mack
-* verison: 0.1
+* verison: 0.3
 */
+import {Board} from './board';
+import {Game} from './game';
 
-const blankLine = ' | | ';
+const game = new Game(7,7,15);
 
-console.log('This is what an empty board looks like.');
-console.log(blankLine);
-console.log(blankLine);
-console.log(blankLine);
+//game.printBoard();
+game.playerClick(1,1);
+//game.playerClick(1,1);
+
+game.printBoard();
+
+const b = new Board(7,7,15);
+console.log(b.getvalidOffsets(1,1));
+console.log(b.getvalidOffsets(0,0));
 
 
-const guessLine = '1| | ';
-const bombLine = ' |B| ';
+/*
+const b = new Board(7,7,15);
 
-console.log('This is what a board with a guess and a bomb on it would look like.');
-console.log(guessLine);
-console.log(bombLine);
-console.log(blankLine);
+console.log(b.playerBoard);
+console.log(b.bombBoard);
+b.printBoard();
+b.playerClick(1,1);
+b.printBoard();
+
+
+
+
+b.playerClick(1,2);
+b.playerClick(1,3);
+b.playerClick(1,4);
+b.playerClick(1,5);
+b.playerClick(1,6);
+b.playerClick(2,1);
+b.playerClick(2,2);
+b.playerClick(1,3);
+b.printBoard();
+*/
